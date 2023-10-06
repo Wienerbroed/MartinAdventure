@@ -60,11 +60,11 @@ public class Room {
     public ArrayList<Item> getItemsInRoom() {
         return itemsInRoom;
     }
-    public ArrayList<Item> getItemList() { //Get method to the arraylist
+    public ArrayList<Item> getItemList() {
         return itemsInRoom;
     }
 
-    public String getItem(String itemName) { //Get metode til items
+    public String getItem(String itemName) {
         for (Item item : itemsInRoom) {
             if (item.getType().equals(itemName)) {
                 itemsInRoom.add(item);
@@ -79,7 +79,7 @@ public class Room {
                 return item;
             }
         }
-        return null; // Return null if the item is not found in the room
+        return null;
     }
 
     public void removeItem(Item item) {

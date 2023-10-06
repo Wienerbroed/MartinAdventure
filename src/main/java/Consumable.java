@@ -6,4 +6,7 @@ public class Consumable extends Item{
         super(description, type, function);
         this.hpHeal = hpHeal;
     }
+    public int getHpHeal() {
+        return hpHeal;
+    }
 }
