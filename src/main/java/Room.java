@@ -11,6 +11,8 @@ public class Room {
 
     private ArrayList<Item> itemsInRoom  = new ArrayList<>();
 
+    private ArrayList<Consumable> consumablesInRoom = new ArrayList<>();
+
     public Room(String name, String description) {
         this.name = name;
         this.description = description;
@@ -82,9 +84,32 @@ public class Room {
         return null;
     }
 
+
+    public void addConsumable(Consumable consumable) {
+        consumablesInRoom.add(consumable);
+    }
+
+    public ArrayList<Consumable> getConsumablesInRoom() {
+        return consumablesInRoom;
+    }
+
+    public Consumable findConsumable(String itemName) {
+        for (Consumable consumable : consumablesInRoom) {
+            if (consumable.getType().equalsIgnoreCase(itemName)) {
+                return consumable;
+            }
+        }
+        return null;
+    }
     public void removeItem(Item item) {
         itemsInRoom.remove(item);
     }
 
+    public void removeConsumable(Consumable consumable) {
+        consumablesInRoom.remove(consumable);
+    }
 
 }
+
+
+

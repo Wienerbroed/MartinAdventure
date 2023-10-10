@@ -9,4 +9,18 @@ public class Consumable extends Item{
     public int getHpHeal() {
         return hpHeal;
     }
+    @Override
+    public String getType() {
+        return super.getType();
+    }
+
+    @Override
+    public String getDescription() {
+        return super.getDescription();
+    }
+
+    @Override
+    public String getFunction() {
+        return super.getFunction();
+    }
 }

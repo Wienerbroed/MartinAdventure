@@ -56,12 +56,13 @@ public void startgame() {
                 lookForItems();
                 break;
             case "take":
-                System.out.println("Please enter the name of the item you want to take");
-                String itemTake = input.nextLine().toLowerCase();
-                if (adventure.player.takeItem(itemTake) == true) {
-                    System.out.println("Item added to inventory");
+                System.out.println("Please enter the name of the item you want to take.");
+                String itemToTake = input.nextLine().toLowerCase();
+
+                if (adventure.player.takeItem(itemToTake)) {
+                    System.out.println("Item added to inventory.");
                 } else {
-                    System.out.println("Item was not found in this room");
+                    System.out.println("Item was not found in this room.");
                 }
                 break;
             case "drop":
@@ -72,6 +73,22 @@ public void startgame() {
                 } else {
                     System.out.println("Item was not found in your inventory");
                 }
+            case "use":
+                System.out.println("Please enter the name of the healing item you want to use.");
+                String itemToUse = input.nextLine().toLowerCase();
+                Consumable healingItem = adventure.player.findHealingItem(itemToUse);
+
+                if (healingItem != null) {
+                    adventure.player.useHealingItem(healingItem);
+                } else {
+                    System.out.println("Item not found in your inventory.");
+                }
+                break;
+            case "consume":
+                System.out.println("Please enter the name of the healing item you want to consume.");
+                String itemToConsume = input.nextLine().toLowerCase();
+                adventure.player.consumeItem(itemToConsume);
+                break;
             case "quit":
             case "exit":
                 gameRunning = false;
@@ -96,14 +113,16 @@ public void startgame() {
             System.out.println("You don't see any items in this room.");
         } else {
             System.out.println("You see the following items in this room:");
-            for (Item item : itemsInRoom) {
-                System.out.println("- Type: " + item.getType());
-                System.out.println("  Description: " + item.getDescription());
-                System.out.println("  Function: " + item.getFunction());
+            for (Item item : currentRoom.getItemList()) {
+                System.out.println(item.getType() +"\n" + item.getDescription()+"\n" + item.getFunction() + "\n");
+            }
 
+            for (Consumable consumable : currentRoom.getConsumablesInRoom()) {
+                System.out.println(consumable.getType() +"\n" + consumable.getDescription() +"\n" + consumable.getFunction());
             }
         }
-    }
+        }
+
     public void showPlayerItems() {
         if (adventure.player.getInventoryList().isEmpty()) {
             System.out.println("Inventory is empty");
@@ -112,6 +131,7 @@ public void startgame() {
             System.out.println(item.getType());
         }
     }
+
 public void roomDirection(boolean goDirection) {
     if(goDirection) {
         System.out.println("You are going to " + adventure.player.getCurrentRoom().getName());

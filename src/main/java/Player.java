@@ -3,8 +3,15 @@ import java.util.ArrayList;
 public class Player {
     private Map map = new Map();
     private Room currentRoom = map.getStarterRoom();
+    private int currentHp;
 
     private ArrayList<Item> inventory = new ArrayList<>();
+
+    private ArrayList<Consumable> healingItems = new ArrayList<>();
+
+    public ArrayList<Consumable> getHealingItems() {
+        return healingItems;
+    }
 
     public Room getCurrentRoom() {
         return currentRoom;
@@ -12,6 +19,13 @@ public class Player {
 
     public void setCurrentRoom(Room currentRoom) {
         this.currentRoom = currentRoom;
+    }
+    public int getCurrentHp() {
+        return currentHp;
+    }
+
+    public void setCurrentHp(int currentHp) {
+        this.currentHp = currentHp;
     }
     public ArrayList<Item> getInventoryList() {
         return inventory;
@@ -59,6 +73,11 @@ public class Player {
     public void removeItem(Item item) {
         inventory.remove(item);
     }
+    public void useHealingItem(Consumable item) {
+        int newHp = currentHp + item.getHpHeal();
+        setCurrentHp(newHp); // Update the player's health directly
+        System.out.println("You used a " + item.getType() + " and healed for " + item.getHpHeal() + " HP.");
+    }
 
     public boolean dropItem(String itemName) { // Method to drop items
         boolean isNull = false;
@@ -74,20 +93,66 @@ public class Player {
     }
 
     public boolean takeItem(String itemName) {
-        boolean itemTaken = false;
+        boolean isNull = false;
         Item item = currentRoom.findItem(itemName);
-
+        if (item == null) {
+            item = currentRoom.findConsumable(itemName);
+        }
         if (item != null) {
-            inventory.add(item);
-            currentRoom.removeItem(item);
-            itemTaken = true;
-            System.out.println("You took the " + itemName + ".");
+            if (item instanceof Consumable) {
+                Consumable consumableItem = (Consumable) item;
+                inventory.add(consumableItem);
+                currentRoom.removeItem(consumableItem);
+                addHealingItem(consumableItem);
+                isNull = true;
+                System.out.println("You took the " + itemName + " (Consumable).");
+            } else {
+                inventory.add(item);
+                currentRoom.removeItem(item);
+                isNull = true;
+                System.out.println("You took the " + itemName + ".");
+            }
         } else {
             System.out.println("Item not found in this room.");
         }
 
-        return itemTaken;
+        return isNull;
     }
+    public Consumable findHealingItem(String itemName) {
+        for (Consumable item : healingItems) {
+            if (item.getType().equals(itemName)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public void addHealingItem(Consumable item) {
+        healingItems.add(item);
+    }
+
+    public void removeHealingItem(Consumable item) {
+        healingItems.remove(item);
+    }
+
+    public void consumeItem(String itemName) {
+        Consumable healingItem = findHealingItem(itemName);
+
+        if (healingItem != null) {
+            System.out.println("Found healing item: " + healingItem.getType());
+
+            int newHp = getCurrentHp() + healingItem.getHpHeal();
+            setCurrentHp(newHp);
+            removeHealingItem(healingItem);
+            System.out.println("You consumed a " + healingItem.getType() + " and gained " + healingItem.getHpHeal() + " HP.");
+        } else {
+            System.out.println("Healing item not found in your inventory.");
+        }
+    }
+
+
+
+
 
 
 

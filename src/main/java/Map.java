@@ -7,6 +7,8 @@ public class Map {
     public Map() {
         adventureMap();
         room1.addItemToRoom(new Item("Old pot","Cookware","Cooks meat"));
+        room1.addConsumable(new Consumable("Burrito", "food", "Heal", 10));
+
     }
 
 
