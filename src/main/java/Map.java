@@ -8,6 +8,8 @@ public class Map {
         adventureMap();
         room1.addItemToRoom(new Item("Old pot","Cookware","Cooks meat"));
         room1.addConsumable(new Consumable("Burrito", "food", "Heal", 10));
+        room1.addMeleeWeapon(new Melee("Sword", 20));
+
 
     }
 

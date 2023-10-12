@@ -9,9 +9,10 @@ public class Room {
     private Room neighbourEast;
     private Room neighbourWest;
 
-    private ArrayList<Item> itemsInRoom  = new ArrayList<>();
-
+    private ArrayList<Item> itemsInRoom = new ArrayList<>();
     private ArrayList<Consumable> consumablesInRoom = new ArrayList<>();
+    private ArrayList<Melee> meleeWeaponsInRoom = new ArrayList<>();
+    private ArrayList<Range> rangeWeaponsInRoom = new ArrayList<>();
 
     public Room(String name, String description) {
         this.name = name;
@@ -109,6 +110,37 @@ public class Room {
         consumablesInRoom.remove(consumable);
     }
 
+    public ArrayList<Melee> getMeleeWeaponsInRoom() {
+        return meleeWeaponsInRoom;
+    }
+
+    public void addMeleeWeapon(Melee meleeWeapon) {
+        meleeWeaponsInRoom.add(meleeWeapon);
+    }
+    public Melee findMeleeWeapon(String itemName) {
+        for (Melee meleeWeapon : meleeWeaponsInRoom) {
+            if (meleeWeapon.getType().equalsIgnoreCase(itemName)) {
+                return meleeWeapon;
+            }
+        }
+        return null;
+    }
+
+    public void removeMeleeWeapon(Melee meleeWeapon) {
+        meleeWeaponsInRoom.remove(meleeWeapon);
+    }
+    public Range findRangeWeapon(String itemName) {
+        for (Range rangeWeapon : rangeWeaponsInRoom) {
+            if (rangeWeapon.getType().equalsIgnoreCase(itemName)) {
+                return rangeWeapon;
+            }
+        }
+        return null;
+    }
+
+    public void removeRangeWeapon(Range rangeWeapon) {
+        rangeWeaponsInRoom.remove(rangeWeapon);
+    }
 }
 
 

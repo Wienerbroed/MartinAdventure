@@ -11,6 +11,8 @@ public class UserInterface {
 
 
 
+
+
 public void startgame() {
     System.out.println("""
             Hello and Welcome to your new adventure!
@@ -89,6 +91,13 @@ public void startgame() {
                 String itemToConsume = input.nextLine().toLowerCase();
                 adventure.player.consumeItem(itemToConsume);
                 break;
+            case "equip":
+                System.out.println("Please enter the name of the weapon you want to equip.");
+                String itemToEquip = input.nextLine().toLowerCase();
+                player.equipWeapon(itemToEquip);
+                break;
+
+
             case "quit":
             case "exit":
                 gameRunning = false;
@@ -108,20 +117,21 @@ public void startgame() {
     public void lookForItems() {
         Room currentRoom = adventure.player.getCurrentRoom();
         ArrayList<Item> itemsInRoom = currentRoom.getItemsInRoom();
+        ArrayList<Melee> meleeWeaponsInRoom = currentRoom.getMeleeWeaponsInRoom();
 
-        if (itemsInRoom.isEmpty()) {
+        if (itemsInRoom.isEmpty() && meleeWeaponsInRoom.isEmpty()) {
             System.out.println("You don't see any items in this room.");
         } else {
             System.out.println("You see the following items in this room:");
             for (Item item : currentRoom.getItemList()) {
-                System.out.println(item.getType() +"\n" + item.getDescription()+"\n" + item.getFunction() + "\n");
+                System.out.println(item.getType() + "\n" + item.getDescription() + "\n" + item.getFunction() + "\n");
             }
 
-            for (Consumable consumable : currentRoom.getConsumablesInRoom()) {
-                System.out.println(consumable.getType() +"\n" + consumable.getDescription() +"\n" + consumable.getFunction());
+            for (Melee meleeWeapon : meleeWeaponsInRoom) {
+                System.out.println(meleeWeapon.getType() + "\n" + meleeWeapon.getDescription() + "\n" + meleeWeapon.getFunction());
             }
         }
-        }
+    }
 
     public void showPlayerItems() {
         if (adventure.player.getInventoryList().isEmpty()) {

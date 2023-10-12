@@ -5,9 +5,13 @@ public class Player {
     private Room currentRoom = map.getStarterRoom();
     private int currentHp;
 
-    private ArrayList<Item> inventory = new ArrayList<>();
+    private Weapon equippedWeapon;
+    private Melee equippedMeleeWeapon;
+    private Range equippedRangeWeapon;
 
+    private ArrayList<Item> inventory = new ArrayList<>();
     private ArrayList<Consumable> healingItems = new ArrayList<>();
+
 
     public ArrayList<Consumable> getHealingItems() {
         return healingItems;
@@ -20,6 +24,7 @@ public class Player {
     public void setCurrentRoom(Room currentRoom) {
         this.currentRoom = currentRoom;
     }
+
     public int getCurrentHp() {
         return currentHp;
     }
@@ -27,9 +32,11 @@ public class Player {
     public void setCurrentHp(int currentHp) {
         this.currentHp = currentHp;
     }
+
     public ArrayList<Item> getInventoryList() {
         return inventory;
     }
+
     public boolean goNorth() {
         if (currentRoom.getNeighbourNorth() == null) {
             System.out.println("You walked into a wall... Why?");
@@ -38,6 +45,7 @@ public class Player {
         }
         return true;
     }
+
     public boolean goSouth() {
         if (currentRoom.getNeighbourSouth() == null) {
             System.out.println("You walked into a wall... Why?");
@@ -46,6 +54,7 @@ public class Player {
         }
         return true;
     }
+
     public boolean goWest() {
         if (currentRoom.getNeighbourWest() == null) {
             System.out.println("You walked into a wall... Why?");
@@ -54,6 +63,7 @@ public class Player {
         }
         return true;
     }
+
     public boolean goEast() {
         if (currentRoom.getNeighbourEast() == null) {
             System.out.println("You walked into a wall... Why?");
@@ -62,62 +72,63 @@ public class Player {
         }
         return true;
     }
+
     public Item findItem(String itemName) {
         for (Item item : inventory) {
-            if (item.getType().equals(item)) {
+            if (item.getType().equals(itemName)) {
                 return item;
             }
         }
         return null;
     }
+
     public void removeItem(Item item) {
         inventory.remove(item);
     }
+
     public void useHealingItem(Consumable item) {
         int newHp = currentHp + item.getHpHeal();
         setCurrentHp(newHp); // Update the player's health directly
         System.out.println("You used a " + item.getType() + " and healed for " + item.getHpHeal() + " HP.");
     }
 
-    public boolean dropItem(String itemName) { // Method to drop items
-        boolean isNull = false;
+    public boolean dropItem(String itemName) {
         for (int i = 0; i < getInventoryList().size(); i++) {
             Item item = getInventoryList().get(i);
             if (item.getType().equals(itemName)) {
                 inventory.remove(item);
                 currentRoom.getItemList().add(item);
-                isNull = true;
+                System.out.println("You dropped the " + itemName + ".");
+                return true;
             }
         }
-        return isNull;
+        System.out.println("Item was not found in your inventory.");
+        return false;
     }
+
 
     public boolean takeItem(String itemName) {
-        boolean isNull = false;
         Item item = currentRoom.findItem(itemName);
-        if (item == null) {
-            item = currentRoom.findConsumable(itemName);
-        }
         if (item != null) {
-            if (item instanceof Consumable) {
-                Consumable consumableItem = (Consumable) item;
-                inventory.add(consumableItem);
-                currentRoom.removeItem(consumableItem);
-                addHealingItem(consumableItem);
-                isNull = true;
-                System.out.println("You took the " + itemName + " (Consumable).");
-            } else {
-                inventory.add(item);
-                currentRoom.removeItem(item);
-                isNull = true;
-                System.out.println("You took the " + itemName + ".");
-            }
+            inventory.add(item);
+            currentRoom.removeItem(item);
+            System.out.println("You took the " + itemName + ".");
+            return true;
         } else {
-            System.out.println("Item not found in this room.");
+            Melee meleeWeapon = currentRoom.findMeleeWeapon(itemName);
+            if (meleeWeapon != null) {
+                inventory.add(meleeWeapon);
+                currentRoom.removeMeleeWeapon(meleeWeapon);
+                System.out.println("You took the " + itemName + " (Melee).");
+                return true;
+            }
         }
 
-        return isNull;
+        System.out.println("Item not found in this room.");
+        return false;
     }
+
+
     public Consumable findHealingItem(String itemName) {
         for (Consumable item : healingItems) {
             if (item.getType().equals(itemName)) {
@@ -126,6 +137,16 @@ public class Player {
         }
         return null;
     }
+
+    public Item findItemInInventory(String itemName) {
+        for (Item item : inventory) {
+            if (item instanceof Melee && item.getType().equalsIgnoreCase(itemName)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
 
     public void addHealingItem(Consumable item) {
         healingItems.add(item);
@@ -153,14 +174,55 @@ public class Player {
 
 
 
-
-
-
-    public Player () {
-
-
-
-
+    public Range findRangeWeaponInInventory(String weaponName) {
+        for (Item item : inventory) {
+            if (item instanceof Range) {
+                Range rangeWeapon = (Range) item;
+                if (rangeWeapon.getType().equalsIgnoreCase(weaponName)) {
+                    return rangeWeapon;
+                }
+            }
+        }
+        return null; // Return null if the weapon is not found in the inventory
     }
-    
+
+
+    public Melee getEquippedMeleeWeapon() {
+        return equippedMeleeWeapon;
+    }
+
+
+    public Range getEquippedRangeWeapon() {
+        return equippedRangeWeapon;
+    }
+
+
+    public Weapon findWeaponInInventory(String weaponName) {
+        for (Item item : inventory) {
+            if (item instanceof Weapon && item.getType().equalsIgnoreCase(weaponName)) {
+                return (Weapon) item;
+            }
+        }
+        return null;
+    }
+
+    public void equipWeapon(String itemName) {
+        Item itemToEquip = findItemInInventory(itemName);
+
+        if (itemToEquip != null) {
+            // Check the type of the item and perform actions accordingly
+            if (itemToEquip instanceof Melee) {
+                equippedMeleeWeapon = (Melee) itemToEquip;
+                System.out.println("You have equipped the " + equippedMeleeWeapon.getType() + ".");
+            } else if (itemToEquip instanceof Range) {
+                equippedRangeWeapon = (Range) itemToEquip;
+                System.out.println("You have equipped the " + equippedRangeWeapon.getType() + ".");
+            } else if (itemToEquip instanceof Weapon) {
+                equippedWeapon = (Weapon) itemToEquip;
+                System.out.println("You have equipped the " + equippedWeapon.getType() + ".");
+            }
+        } else {
+            System.out.println("No item with the name '" + itemName + "' found in your inventory.");
+        }
+    }
 }
